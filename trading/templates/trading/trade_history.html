@@ -1,0 +1,30 @@
+{% extends 'trading/base.html' %}
+
+{% block title %}Trade History{% endblock %}
+
+{% block content %}
+    <h1>Trade History</h1>
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Amount</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trade in trades %}
+                <tr>
+                    <td>{{ trade.symbol }}</td>
+                    <td>{{ trade.amount }}</td>
+                    <td>{{ trade.timestamp }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No trades found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3">Back to Dashboard</a>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'trading/base.html' %}
+
+{% block title %}Available Assets{% endblock %}
+
+{% block content %}
+    <h1>Available Assets</h1>
+    <ul class="list-group mt-3">
+        {% for asset in assets %}
+            <li class="list-group-item">{{ asset }}</li>
+        {% empty %}
+            <li class="list-group-item">No assets available at the moment.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3">Back to Dashboard</a>
+{% endblock %}

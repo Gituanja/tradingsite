@@ -1,0 +1,68 @@
+{% extends 'trading/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h1>Trading Dashboard</h1>
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <a href="{% url 'available_assets' %}" class="btn btn-primary btn-lg btn-block mb-3">Available Assets</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'place_trade' %}" class="btn btn-success btn-lg btn-block mb-3">Place Trade</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'trade_history' %}" class="btn btn-info btn-lg btn-block mb-3">Trade History</a>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <h2>Live Prices</h2>
+            <ul id="price-list" class="list-group">
+                <li class="list-group-item">Loading prices...</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const priceSocket = new WebSocket(
+        protocol + window.location.host + '/ws/prices/'
+    );
+
+    priceSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        if (data.type === 'price_update') {
+            updatePrices(data.prices);
+        }
+    };
+
+    priceSocket.onopen = function(e) {
+        priceSocket.send(JSON.stringify({
+            'message': 'get_prices'
+        }));
+    };
+
+    function updatePrices(prices) {
+        const priceList = document.getElementById('price-list');
+        priceList.innerHTML = '';
+        for (const [symbol, price] of Object.entries(prices)) {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = `${symbol}: ${price}`;
+            priceList.appendChild(li);
+        }
+    }
+
+    // Request price updates every 5 seconds
+    setInterval(function() {
+        if (priceSocket.readyState === WebSocket.OPEN) {
+            priceSocket.send(JSON.stringify({
+                'message': 'get_prices'
+            }));
+        }
+    }, 5000);
+</script>
+{% endblock %}

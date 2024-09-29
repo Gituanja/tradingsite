@@ -1,0 +1,14 @@
+{% extends 'trading/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1>Welcome to our Trading Site</h1>
+    <p>This is the homepage of our trading platform.</p>
+    {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-secondary">Register</a>
+    {% endif %}
+{% endblock %}
